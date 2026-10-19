@@ -3,9 +3,8 @@ import React from 'react';
 export default function Hero({ onStart }) {
   return (
     <section className="hero-section">
-      <div className="hero-meta">Browser-Based Realtime Hand Vision</div>
       <h1 className="hero-title">
-        Your hands. Your language. Recognized instantly.
+        Hand gestures recognized instantly
       </h1>
       <p className="hero-description">
         HandSight recognizes hand gestures in real time directly through your webcam using client-side landmark analysis. High accuracy, zero server latency, and complete privacy.

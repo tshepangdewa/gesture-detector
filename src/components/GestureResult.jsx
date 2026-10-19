@@ -33,43 +33,6 @@ export default function GestureResult({
         </div>
       </div>
 
-      {/* Real-time Finger State Matrix */}
-      <div className="finger-matrix">
-        <div className="matrix-title">Skeletal Finger Analysis</div>
-        <div className="matrix-grid">
-          <div className={`matrix-item ${handDetails?.thumbExt ? 'extended' : ''}`}>
-            <span className="matrix-item-name">THUMB</span>
-            <span className="matrix-item-state">
-              {handDetails?.thumbExt ? 'OPEN' : 'FOLD'}
-            </span>
-          </div>
-          <div className={`matrix-item ${handDetails?.indexExt ? 'extended' : ''}`}>
-            <span className="matrix-item-name">INDEX</span>
-            <span className="matrix-item-state">
-              {handDetails?.indexExt ? 'OPEN' : 'FOLD'}
-            </span>
-          </div>
-          <div className={`matrix-item ${handDetails?.middleExt ? 'extended' : ''}`}>
-            <span className="matrix-item-name">MIDDLE</span>
-            <span className="matrix-item-state">
-              {handDetails?.middleExt ? 'OPEN' : 'FOLD'}
-            </span>
-          </div>
-          <div className={`matrix-item ${handDetails?.ringExt ? 'extended' : ''}`}>
-            <span className="matrix-item-name">RING</span>
-            <span className="matrix-item-state">
-              {handDetails?.ringExt ? 'OPEN' : 'FOLD'}
-            </span>
-          </div>
-          <div className={`matrix-item ${handDetails?.pinkyExt ? 'extended' : ''}`}>
-            <span className="matrix-item-name">PINKY</span>
-            <span className="matrix-item-state">
-              {handDetails?.pinkyExt ? 'OPEN' : 'FOLD'}
-            </span>
-          </div>
-        </div>
-      </div>
-
       {/* System Status and Model Cache Information */}
       <div className="system-status-box">
         <div className="system-status-row">
@@ -84,7 +47,14 @@ export default function GestureResult({
         </div>
         <div className="system-status-row">
           <span className="system-status-label">Camera:</span>
-          <span className="system-status-val" style={{ textTransform: 'uppercase' }}>
+          <span
+            className="system-status-val"
+            style={{
+              textTransform: 'uppercase',
+              color: cameraStatus === 'active' ? '#227B3D' : 'inherit',
+              fontWeight: cameraStatus === 'active' ? '700' : '400'
+            }}
+          >
             {cameraStatus}
           </span>
         </div>
@@ -96,23 +66,22 @@ export default function GestureResult({
         )}
       </div>
 
-      {/* Quick Reference Checklist */}
+      {/* Quick Reference List */}
       <div className="quick-ref-list">
         <div className="quick-ref-heading">Supported Target Set</div>
-        <div className="quick-ref-items">
+        <ul className="quick-ref-items">
           {SUPPORTED_GESTURES.map((gesture) => {
             const isActive = gesture.name === detectedGesture;
             return (
-              <div
+              <li
                 key={gesture.id}
                 className={`quick-ref-item ${isActive ? 'active' : ''}`}
               >
-                <span>{gesture.name}</span>
-                <span>{gesture.badge}</span>
-              </div>
+                {gesture.name}
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
     </div>
   );

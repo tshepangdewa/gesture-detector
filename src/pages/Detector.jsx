@@ -33,7 +33,7 @@ export default function Detector({ onNavigate }) {
             onClick={() => onNavigate('home')}
             style={{ fontSize: '13px', padding: '6px 14px' }}
           >
-            ← Back to Home
+            Back
           </button>
         </div>
       </div>

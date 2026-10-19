@@ -233,9 +233,14 @@ export default function CameraView({
                 : 'error'
             }`}
           />
-          <span>
+          <span
+            style={{
+              color: cameraState === 'active' ? '#227B3D' : 'inherit',
+              fontWeight: cameraState === 'active' ? '700' : '400'
+            }}
+          >
             {cameraState === 'active'
-              ? 'WEBCAM LIVE'
+              ? 'WEBCAM ACTIVE'
               : cameraState === 'loading'
               ? 'INITIALIZING'
               : cameraState === 'permission_denied'
@@ -274,7 +279,7 @@ export default function CameraView({
             <div className="camera-empty-icon">📷</div>
             <div className="camera-empty-title">Camera Feed Inactive</div>
             <p className="camera-empty-text">
-              Click "Start Camera" below to request access and initialize the on-device MediaPipe vision engine.
+              Click "Start Camera" below to request access and initialize the MediaPipe vision engine.
             </p>
             <button
               type="button"
@@ -290,7 +295,6 @@ export default function CameraView({
         {/* Loading State */}
         {cameraState === 'loading' && (
           <div className="camera-empty-state">
-            <div className="camera-empty-icon">⏳</div>
             <div className="camera-empty-title">Initializing Vision Engine</div>
             <p className="camera-empty-text">
               Loading model from browser storage cache and requesting camera access...
@@ -301,7 +305,6 @@ export default function CameraView({
         {/* Permission Denied State */}
         {cameraState === 'permission_denied' && (
           <div className="camera-empty-state">
-            <div className="camera-empty-icon">🔒</div>
             <div className="camera-empty-title">Camera Access Denied</div>
             <p className="camera-empty-text">{errorMessage}</p>
             <button
@@ -317,7 +320,6 @@ export default function CameraView({
         {/* Unavailable or Error State */}
         {(cameraState === 'unavailable' || cameraState === 'error') && (
           <div className="camera-empty-state">
-            <div className="camera-empty-icon">⚠️</div>
             <div className="camera-empty-title">Camera Initialization Failed</div>
             <p className="camera-empty-text">{errorMessage}</p>
             <button

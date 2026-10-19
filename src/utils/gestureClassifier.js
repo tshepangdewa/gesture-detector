@@ -10,64 +10,56 @@ export const SUPPORTED_GESTURES = [
     name: 'Number 1',
     category: 'Counting',
     description: 'Index finger extended, remaining fingers folded.',
-    instruction: 'Point your index finger upward with other fingers folded.',
-    badge: '1'
+    instruction: 'Point your index finger upward with other fingers folded.'
   },
   {
     id: 'number_2',
     name: 'Number 2',
     category: 'Counting',
     description: 'Index and middle fingers extended, ring and little fingers folded.',
-    instruction: 'Extend both index and middle fingers.',
-    badge: '2'
+    instruction: 'Extend both index and middle fingers.'
   },
   {
     id: 'number_3',
     name: 'Number 3',
     category: 'Counting',
     description: 'Three fingers extended, remaining fingers folded.',
-    instruction: 'Extend index, middle, and ring fingers.',
-    badge: '3'
+    instruction: 'Extend index, middle, and ring fingers.'
   },
   {
     id: 'number_4',
     name: 'Number 4',
     category: 'Counting',
     description: 'Four fingers extended, thumb folded.',
-    instruction: 'Extend four fingers with thumb folded across your palm.',
-    badge: '4'
+    instruction: 'Extend four fingers with thumb folded across your palm.'
   },
   {
     id: 'number_5',
     name: 'Number 5',
     category: 'Counting',
     description: 'All five fingers extended.',
-    instruction: 'Open your hand with all five fingers spread.',
-    badge: '5'
+    instruction: 'Open your hand with all five fingers spread.'
   },
   {
     id: 'thumbs_up',
     name: 'Thumbs Up',
     category: 'Sign',
     description: 'Thumb pointing upward, other four fingers folded.',
-    instruction: 'Make a fist with your thumb pointing straight up.',
-    badge: '👍'
+    instruction: 'Make a fist with your thumb pointing straight up.'
   },
   {
     id: 'thumbs_down',
     name: 'Thumbs Down',
     category: 'Sign',
     description: 'Thumb pointing downward, other four fingers folded.',
-    instruction: 'Make a fist with your thumb pointing straight down.',
-    badge: '👎'
+    instruction: 'Make a fist with your thumb pointing straight down.'
   },
   {
     id: 'stop',
     name: 'Stop',
     category: 'Sign',
     description: 'All fingers are folded into a fist.',
-    instruction: 'Clench all fingers and thumb into a closed fist.',
-    badge: '✊'
+    instruction: 'Clench all fingers and thumb into a closed fist.'
   }
 ];
 

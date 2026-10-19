@@ -10,10 +10,9 @@ export default function Header({ currentView, onNavigate }) {
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && onNavigate('home')}
-          aria-label="HandSight Home"
+          aria-label="Gesture Detector Home"
         >
-          <span className="brand-wordmark">HandSight</span>
-          <span className="brand-tag">On-Device AI</span>
+          <span className="brand-wordmark">Gesture Detector</span>
         </div>
 
         <nav className="site-nav" aria-label="Main Navigation">
