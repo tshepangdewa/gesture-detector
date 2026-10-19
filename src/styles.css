@@ -245,12 +245,14 @@ button.btn-danger:hover:not(:disabled) {
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 16px;
+  text-align: center;
 }
 
 .section-heading {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 36px;
+  text-align: center;
 }
 
 .steps-grid {
