@@ -1,140 +1,46 @@
-# HandSight — Hand Gesture Detection Website
-
-HandSight is a minimalist, high-precision web application that detects and recognizes hand gestures in real time using the user's webcam. Detection and classification run entirely client-side in the browser using the MediaPipe Hand Landmarker vision engine, providing instant feedback with zero server latency and absolute privacy.
-
----
-
-## 1. Visual Identity & Design System
-
-HandSight features a technical, monospace aesthetic inspired by high-precision lab instruments and classic architectural drafting:
-
-- **Typography**: Ubuntu Mono (`font-weight: 400`, monospace fallback)
-- **Palette**:
-  - Primary Background: `#F6F3ED` (soft parchment/cream)
-  - Primary Text & Controls: `#313851` (deep slate navy)
-  - Secondary Surface: `#ECE7DE`
-  - Border Accents: `#313851` (thin 1px solid borders)
-- **Strict Geometric Restraint**:
-  - Zero gradients
-  - Zero glassmorphism
-  - Zero glowing effects
-  - Sharp corners (`border-radius: 0`) across all elements, buttons, inputs, and panels
-  - High-contrast tactile hover states
-
----
-
-## 2. Supported Gestures
-
-HandSight classifies 21 MediaPipe hand landmarks into exactly **eight** distinct hand gestures using scale-invariant Euclidean geometry and relative angular vectors:
-
-| Gesture | Category | Geometric Classification Rule |
-| :--- | :--- | :--- |
-| **Number 1** | Counting | Index finger extended. Middle, ring, and pinky folded into palm (with natural tolerance for thumb position). |
-| **Number 2** | Counting | Index and middle fingers extended. Ring and pinky folded. Default interpretation for two extended fingers. |
-| **Number 3** | Counting | Three fingers extended (index, middle, ring). Pinky folded. |
-| **Number 4** | Counting | Four fingers extended (index, middle, ring, pinky). Thumb folded across the palm. |
-| **Number 5** | Counting | All five fingers extended and spread outward. |
-| **Thumbs Up** | Sign | Thumb pointing upward relative to the hand. Other four fingers folded into a fist. |
-| **Thumbs Down** | Sign | Thumb pointing downward relative to the hand. Other four fingers folded into a fist. |
-| **Stop** | Sign | All fingers and thumb folded into a closed fist. |
-
-*Note: In accordance with project specifications, ambiguous hand poses are never guessed and will cleanly display "No gesture detected". Temporal smoothing across consecutive video frames prevents frame flicker.*
-
----
-
-## 3. Architecture & MediaPipe Model Caching
-
-### On-Demand Engine Initialization
-- The MediaPipe model is **never** loaded on the homepage visit.
-- Initialization only occurs when the user navigates to the detector and explicitly clicks **[Start Camera]**.
-
-### Multi-Tiered IndexedDB Model Caching
-1. **Cache Validation**: On initialization, `modelCache.js` checks the browser's IndexedDB (`HandSight_Model_Cache`) for `hand_landmarker_task_v1`.
-2. **Integrity Check**: Verifies that the cached model is a valid `ArrayBuffer` meeting the minimum byte threshold (~7.8 MB). Corrupt or partial cache entries are purged automatically.
-3. **Download on First Use**: If no cache entry exists, the model is fetched from the local production asset (`/models/hand_landmarker.task`) with an automatic fallback to Google's official MediaPipe Cloud Storage CDN.
-4. **Persistent Storage**: The verified model buffer is saved into IndexedDB, enabling near-instantaneous subsequent launches with zero network overhead.
-
----
-
-## 4. Privacy & Security
-
-- **100% Client-Side Processing**: Camera frames are processed directly in GPU/CPU memory via WebAssembly and WebGL.
-- **Zero Recording or Transmission**: Video streams are never recorded, cached to disk, or sent to any server.
-- **Strict Permission Scoping**: Camera access is requested only when the user starts detection and is immediately terminated when detection is stopped or when navigating away.
-
----
-
-## 5. Local Development
-
-### Prerequisites
-- Node.js (v18 or higher recommended; developed and tested on Node v22)
-- npm (v9 or higher)
-
-### Installation
-```bash
-git clone https://github.com/tshepangdewa/gesture-detector.git
-cd gesture-detector
-npm install
 ```
+Gesture Detector is a website that recognizes hand gestures through your webcam. Everything runs inside your browser. No video is ever sent to a server, and there is no account or login.
 
-### Running the Development Server
-```bash
-npm run dev
-```
-Open `http://localhost:5173` in your browser.
+How it works
 
-### Running Unit & Gesture Logic Tests
-```bash
-node test_all_gestures.js
-```
+When you open the Detector page and press Start Camera, the browser asks for permission to use your webcam. Once you allow it, the video plays on the page, mirrored so it feels like looking in a mirror.
 
-### Building for Production
-```bash
-npm run build
-```
-Production assets are generated in the `dist/` directory.
+A loop then runs many times every second. On each pass, the current video frame is given to a hand tracking model from Google called MediaPipe Hand Landmarker. The model finds your hand and returns 21 points on it, such as the wrist, the knuckles, the finger joints and the fingertips. Each point has an x, y and z position, so the hand is described in three dimensions.
 
----
+These points are then passed to a classifier written for this project. It does not use machine learning. It uses simple geometry. It measures the distances between points and the angles between finger directions to decide which fingers are straight and which are folded. It also checks which way the thumb is pointing. The measurements are compared to the hand's own size, so the result does not change much whether your hand is close to or far from the camera. The pattern of open and closed fingers is matched against eight supported gestures, such as an open palm, thumbs up, thumbs down and a closed fist.
 
-## 6. Vercel Deployment Instructions
+Camera frames are noisy, and a single bad frame could make the result flicker. To avoid this, the app looks at several recent frames and only changes the result when they agree. This is called temporal smoothing. The result is steady and easy to read.
 
-HandSight is optimized for seamless zero-configuration deployment on [Vercel](https://vercel.com):
+The result is shown in the panel beside the camera. It displays the gesture name, a confidence percentage, and the status of the engine, the model cache and the camera. A list shows all supported gestures, and the one being detected is highlighted. You can also turn on an overlay that draws the 21 points and the lines between them on top of the video.
 
-1. **Push to GitHub**:
-   Ensure all repository changes are pushed to your remote repository.
+Model caching
 
-2. **Import Project to Vercel**:
-   - Log in to your Vercel Dashboard and click **"Add New Project"**.
-   - Select your `gesture-detector` repository.
+The hand tracking model is a file of a few megabytes. The first time you use the app, it is loaded and saved in the browser's IndexedDB storage. On later visits it is read from there instead of downloaded again, so the app starts faster and can reuse the file without a new download.
 
-3. **Configure Build & Output Settings**:
-   - **Framework Preset**: Vite
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-   - **Install Command**: `npm install`
+Tech stack
 
-4. **SPA Routing Configuration (`vercel.json`)**:
-   The repository includes a root `vercel.json` file configuring rewrites so that direct links or refreshes to `/detector` route correctly to `index.html`:
-   ```json
-   {
-     "framework": "vite",
-     "rewrites": [
-       {
-         "source": "/(.*)",
-         "destination": "/index.html"
-       }
-     ]
-   }
-   ```
+The interface is built with React 18. The project is bundled and served during development by Vite. Hand tracking uses the MediaPipe Tasks Vision library, version 0.10.14, which runs the model in the browser using WebAssembly. The video is read through the standard browser camera API, and the overlay is drawn on an HTML canvas placed over the video. The styling is plain CSS with a monospace font from Google Fonts.
 
-5. **HTTPS Requirement for Webcam Access**:
-   Browsers require a secure context (HTTPS) to allow `navigator.mediaDevices.getUserMedia`. Vercel automatically provisions SSL certificates for all deployments, guaranteeing camera access works in production out of the box.
+The site has two views, Home and Detector. They are switched with a small piece of code that uses the browser history, so the address bar and back button still work. No routing library is needed.
 
----
+There is no backend, no database and no API. The whole project is static files, which keeps it simple and private.
 
-## 7. Project File Structure
+Hosting
 
-```
+Because the site is only static files, it can be hosted almost anywhere. The project is set up for Vercel, which can build it straight from a Git repository. Running the build command creates a dist folder, and Vercel serves that folder over HTTPS. HTTPS matters here, because browsers only allow camera access on secure pages, with localhost as the one exception during development. Any other static host, such as Netlify or GitHub Pages, would also work with the same build output.
+
+Running it yourself
+
+Install the dependencies with npm install, start the development server with npm run dev, and create the production build with npm run build.
+
+Limits
+
+Accuracy depends on good lighting and on showing one hand clearly to the camera. Because the rules are hand-written, the app only knows the eight gestures it was built for. Adding a new gesture means writing a new rule in the classifier file.
+
+
+Project File Structure
+
+
 gesture-detector/
 ├── public/
 │   ├── favicon.svg                 # Technical geometric SVG favicon
@@ -162,4 +68,3 @@ gesture-detector/
 ├── vercel.json                     # Vercel SPA rewrites configuration
 ├── vite.config.js                  # Vite configuration
 └── README.md                       # Documentation & deployment guide
-```
