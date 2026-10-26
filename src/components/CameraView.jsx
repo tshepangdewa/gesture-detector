@@ -33,6 +33,8 @@ export default function CameraView({
   const [cameraState, setCameraState] = useState('inactive'); // 'inactive' | 'loading' | 'active' | 'permission_denied' | 'unavailable' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
   const [fps, setFps] = useState(0);
+  const [videoRatio, setVideoRatio] = useState(null);
+  const videoRatioRef = useRef(null);
 
   // Notify parent of camera state changes
   useEffect(() => {
@@ -84,6 +86,12 @@ export default function CameraView({
 
         // Draw landmarks on overlay canvas
         if (canvas) {
+          // Keep the on-screen viewport shaped like the real video (portrait on phones)
+          const ratio = video.videoWidth / video.videoHeight;
+          if (ratio && Math.abs(ratio - (videoRatioRef.current || 0)) > 0.01) {
+            videoRatioRef.current = ratio;
+            setVideoRatio(ratio);
+          }
           if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -205,6 +213,8 @@ export default function CameraView({
 
     smootherRef.current.reset();
     lastReportedGestureRef.current = null;
+    videoRatioRef.current = null;
+    setVideoRatio(null);
     setCameraState('inactive');
     onGestureChange?.({ gesture: null, confidence: 0, rawDetails: null });
     onModelStatusChange?.('Standby');
@@ -258,7 +268,10 @@ export default function CameraView({
       </div>
 
       {/* Video Viewport Area */}
-      <div className="camera-screen">
+      <div
+        className={`camera-screen ${cameraState === 'active' && videoRatio ? 'has-video' : ''}`}
+        style={cameraState === 'active' && videoRatio ? { '--video-ratio': videoRatio } : undefined}
+      >
         <video
           ref={videoRef}
           className="camera-video"
